@@ -24,7 +24,7 @@ module DeadlockRetry
       rescue ActiveRecord::StatementInvalid => error
         raise if in_nested_transaction?
         if DEADLOCK_ERROR_MESSAGES.any? { |msg| error.message =~ /#{Regexp.escape(msg)}/ }
-          raise if retry_count >= self.class.transaction_lock_retries
+          raise if retry_count >= self.transaction_lock_retries
           retry_count += 1
           logger.info "Deadlock detected on retry #{retry_count}, restarting transaction"
           exponential_pause(retry_count)
